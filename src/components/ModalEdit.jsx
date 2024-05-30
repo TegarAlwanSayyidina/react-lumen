@@ -8,6 +8,7 @@ export default function ModalEdit({ isOpen, closeModal, judulModal, inputData, e
     }
 
     const [dataDetail, setDataDetail] = useState({})
+    const [error, setErrors] = useState({})
     useEffect(() => {
         axios.get(endpoints['detail'], {
             headers: {
@@ -24,10 +25,20 @@ export default function ModalEdit({ isOpen, closeModal, judulModal, inputData, e
     }, []);
 
     function handleChange(e) {
-        const {name,value} = e.target;
+        const { name, value } = e.target;
         setDataDetail(dataSebelumnya => ({
-            ...dataSebelumnya,[name] : value
-        }))
+            ...dataSebelumnya, [name]: value
+        }));
+        
+        if (value.trim() === '') {
+            setErrors(errorsSebelumnya => ({
+                ...errorsSebelumnya, [name]: 'Field is required'
+            }));
+        } else {
+            setErrors(errorsSebelumnya => ({
+                ...errorsSebelumnya, [name]: ''
+        }));
+    }
     }
 
     function handleUpdate (e) {
@@ -43,7 +54,7 @@ export default function ModalEdit({ isOpen, closeModal, judulModal, inputData, e
                 window.location.reload();
             })
             .catch(err => {
-                console.log(err)
+                setErrors(err)
             })
     }
 
@@ -63,6 +74,25 @@ export default function ModalEdit({ isOpen, closeModal, judulModal, inputData, e
                                 <span class="sr-only">Close modal</span>
                             </button>
                         </div>
+                        {
+                            Object.keys(error).length > 0 ? (
+                                <div role="alert">
+                                    <div className="bg-red-500 text-white rounded-t px-4 py-2">
+                                   Gagall!
+                                   <h1>nama tidak boleh kosong</h1>
+                                    </div>
+                                    <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                                        <ul>
+                                            {
+                                                Object.entries(error).map(([key, value]) => {
+                                                    <li key={key}>{key != 'status' && key != 'message' ? value : ''}</li>
+                                                })
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            ) : ''
+                        } 
                         <div class="p-4 md:p-5">
                             <form class="space-y-4" onSubmit={handleUpdate}>
                                 {
