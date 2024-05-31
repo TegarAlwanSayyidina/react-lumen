@@ -1,9 +1,10 @@
 import React, { memo, useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import Table from "../components/Table";
-import axios from "axios";
+import Navbar from "../components/Navbar"; // Import komponen Navbar
+import Table from "../components/Table"; // Import komponen Table
+import axios from "axios"; // Import axios untuk melakukan request HTTP
 
 export default function Stuffs() {
+    // Array untuk header tabel
     const dataThParent = [
         "#",
         "Name",
@@ -13,61 +14,69 @@ export default function Stuffs() {
         "Action"
     ]
 
+    // State untuk menyimpan data barang (stuffs)
     const [stuffs, setStuffs] = useState({});
 
+    // Mengambil data dari API saat komponen di-mount
     useEffect(() => {
         axios.get('http://localhost:8000/stuffs', {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token') // Mengambil token dari local storage
             }
         })
             .then(res => {
-                setStuffs(res.data.data)
+                setStuffs(res.data.data); // Menyimpan data yang diterima dari API ke dalam state
             })
             .catch(err => {
-                console.log(err)
+                console.log(err); // Menampilkan error jika request gagal
             })
     }, []);
 
+    // Konfigurasi kolom dari database ke tabel
     const columnDatabase = {
-        "name":null,
-        "category":null,
-        "stuff_stock" : "total_available",
-        "stuff_stock*" : "total_defec",
+        "name": null,
+        "category": null,
+        "stuff_stock": "total_available",
+        "stuff_stock*": "total_defec",
     }
 
+    // Konfigurasi tombol aksi yang akan ditampilkan pada tabel
     const buttons = [
         // "edit",
         'show',
         "delete",
         // "create",
         "createInbound"
-        
     ]
 
+    // Endpoints untuk operasi CRUD
     const endpoints = {
-        "detail" : "http://localhost:8000//stuffs/{id}",
-        "delete" : "http://localhost:8000///stuffs/delete/{id}",
-        "update" : "http://localhost:8000///stuffs/update/{id}",
-        "store" : "http://localhost:8000///stuffs/store",
-        'edit' : "http://localhost:8000///stuffs/edit"
+        "detail": "http://localhost:8000/stuffs/{id}",
+        "delete": "http://localhost:8000/stuffs/delete/{id}",
+        "update": "http://localhost:8000/stuffs/update/{id}",
+        "store": "http://localhost:8000/stuffs/store",
+        'edit': "http://localhost:8000/stuffs/edit"
     }
 
-    const columnDetailModalDelete = 'name'
+    // Kolom yang akan ditampilkan pada modal delete
+    const columnDetailModalDelete = 'name';
 
-    const judulModalEdit = 'Stuff'
+    // Judul modal edit
+    const judulModalEdit = 'Stuff';
 
+    // Konfigurasi input data untuk form edit dan create
     const inputData = {
-        // kalau tag input , typenya bisa text, number, email,
-        "name" : {
-            "type" : "text",
-            "options" : null,
+        // Jika tag input, typenya bisa text, number, email, dll.
+        "name": {
+            "type": "text",
+            "options": null, // Tidak ada pilihan untuk input teks
         },
-        "category" : {
-            "type" : "select",
-            "options" : ['KLN','HTL','Sarpras/Teknisi']
+        "category": {
+            "type": "select",
+            "options": ['KLN', 'HTL', 'Sarpras/Teknisi'] // Pilihan untuk dropdown select
         }
     }
+
 
     return (
         <>
